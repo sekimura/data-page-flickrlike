@@ -35,7 +35,7 @@ sub Data::Page::navigations {
             $next_skip--;
         }
     }
-    return $nav;
+    return wantarray ? @$nav : $nav;
 }
 
 1; # Magic true value required at end of module
@@ -43,148 +43,77 @@ __END__
 
 =head1 NAME
 
-Data::Page::FlickrLike - [One line description of module's purpose here]
-
-
-=head1 VERSION
-
-This document describes Data::Page::FlickrLike version 0.0.1
-
+Data::Page::FlickrLike - Generates flickr-like navigation links
 
 =head1 SYNOPSIS
 
+    use Data::Page;
     use Data::Page::FlickrLike;
 
-=for author to fill in:
-    Brief code example(s) here showing commonest usage(s).
-    This section will be as far as many users bother reading
-    so make it as educational and exeplary as possible.
-  
-  
+    my $page = Data::Page->new();
+    $page->total_entries($total_entries);
+    $page->entries_per_page($entries_per_page);
+    $page->current_page($current_page);
+   
+    print join (" ",
+            map { $_ == 0
+              ? q{<span>...</span>}
+              : qq{<a href="/page/$_">$_</a>}
+            } $page->navigations);  
+
+    # 1*2 3 4 5 6 7 ... 76 77
+    # 1 2 ... 10 11 12 13*14 15 16 ... 76 77
+    # 1 2 ... 71 72 73 74 75 76 77*
+    # Note: * means the current page
+
 =head1 DESCRIPTION
 
-=for author to fill in:
-    Write a full description of the module and its features here.
-    Use subsections (=head2, =head3) as appropriate.
+Data::Page::FlickrLike is an extension to Data::Page to generate flickr-like
+nagivation links.
 
+=head1 METHODS 
 
-=head1 INTERFACE 
+=over 4
 
-=for author to fill in:
-    Write a separate section listing the public components of the modules
-    interface. These normally consist of either subroutines that may be
-    exported, or methods that may be called on objects belonging to the
-    classes provided by the module.
+=item navigations (Data::Page)
 
+This method gets an array reference conists of the number of pages.
 
-=head1 DIAGNOSTICS
+   $nav = $page->navigations
 
-=for author to fill in:
-    List every single error and warning message that the module can
-    generate (even the ones that will "never happen"), with a full
-    explanation of each problem, one or more likely causes, and any
-    suggested remedies.
+It caluculates: how may numbers shold be displayed from the first page, how
+many numbers should be displayed form the last page, whether or not there's 
+a big enough gap between the first page and current page to put an ellipsis
+and more.  As the name of this modules says, the array ref should make it 
+easy to generate a "Flickr-Like" navigation.
 
-=over
+It uses "0" for an ellipsis between two sets of page numbers.  For example, 
+if you have enough amount of items, navigations() returns like this:
 
-=item C<< Error message here, perhaps with %s placeholders >>
+  [ 1, 2, 3, 4, 5, 6, 7, 0, 76, 77 ] 
 
-[Description of error here]
+So, you need to put an exception to display an ellipsis(...) like this.
 
-=item C<< Another error message here >>
-
-[Description of error here]
-
-[Et cetera, et cetera]
+    for my $num ($page->navigations) {
+        if ($num == 0 ) {
+            print "...";
+        } else {
+            print qq{<a href="/page/$_">$_</a>};
+        }
+    }
 
 =back
 
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-=for author to fill in:
-    A full explanation of any configuration system(s) used by the
-    module, including the names and locations of any configuration
-    files, and the meaning of any environment variables or properties
-    that can be set. These descriptions must also include details of any
-    configuration language used.
-  
-Data::Page::FlickrLike requires no configuration files or environment variables.
-
-
-=head1 DEPENDENCIES
-
-=for author to fill in:
-    A list of all the other modules that this module relies upon,
-    including any restrictions on versions, and an indication whether
-    the module is part of the standard Perl distribution, part of the
-    module's distribution, or must be installed separately. ]
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-=for author to fill in:
-    A list of any modules that this module cannot be used in conjunction
-    with. This may be due to name conflicts in the interface, or
-    competition for system or program resources, or due to internal
-    limitations of Perl (for example, many modules that use source code
-    filters are mutually incompatible).
-
-None reported.
-
-
-=head1 BUGS AND LIMITATIONS
-
-=for author to fill in:
-    A list of known problems with the module, together with some
-    indication Whether they are likely to be fixed in an upcoming
-    release. Also a list of restrictions on the features the module
-    does provide: data types that cannot be handled, performance issues
-    and the circumstances in which they may arise, practical
-    limitations on the size of data sets, special cases that are not
-    (yet) handled, etc.
-
-No bugs have been reported.
-
-Please report any bugs or feature requests to
-C<bug-data-page-flickrlike@rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org>.
-
-
 =head1 AUTHOR
 
-Masayoshi Sekimura  C<< <sekimura@gmail.com> >>
+Masayoshi Sekimura E<lt>sekimura@cpan.orgE<gt>
 
+=head1 LICENSE
 
-=head1 LICENCE AND COPYRIGHT
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
-Copyright (c) 2009, Masayoshi Sekimura C<< <sekimura@gmail.com> >>. All rights reserved.
+=head1 SEE ALSO
 
-This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
+L<Data::Page>, L<Data::Page::Navigation>, http://flickr.com/
 
-
-=head1 DISCLAIMER OF WARRANTY
-
-BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
-FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
-PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
-EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
-ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
-YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
-NECESSARY SERVICING, REPAIR, OR CORRECTION.
-
-IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
-REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
-LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
-OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
-THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
-RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
-FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
-SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
