@@ -4,6 +4,12 @@ Makefile.PL
 README
 lib/Data/Page/FlickrLike.pm
 t/00.load.t
-t/perlcritic.t
+t/01.navigations.t
+t/02.example.t
+t/03.inherit.t
+t/lib/MyPager.pm
 t/pod-coverage.t
 t/pod.t
+t/test.yaml
+xt/perlcritic.t
+xt/podspell.t

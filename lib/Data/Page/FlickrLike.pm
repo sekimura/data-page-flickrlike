@@ -2,6 +2,7 @@ package Data::Page::FlickrLike;
 
 use warnings;
 use strict;
+use 5.008_001;
 
 use Exporter::Lite;
 use Data::Page;
@@ -69,7 +70,7 @@ Data::Page::FlickrLike - Generates flickr-like navigation links
 =head1 DESCRIPTION
 
 Data::Page::FlickrLike is an extension to Data::Page to generate flickr-like
-nagivation links.
+navigation links.
 
 =head1 METHODS 
 
@@ -77,11 +78,11 @@ nagivation links.
 
 =item navigations (Data::Page)
 
-This method gets an array reference conists of the number of pages.
+This method gets an array reference consists of the number of pages.
 
    $nav = $page->navigations
 
-It caluculates: how may numbers shold be displayed from the first page, how
+It calculates: how may numbers should be displayed from the first page, how
 many numbers should be displayed form the last page, whether or not there's 
 a big enough gap between the first page and current page to put an ellipsis
 and more.  As the name of this modules says, the array ref should make it 

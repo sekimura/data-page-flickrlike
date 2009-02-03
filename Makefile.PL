@@ -1,17 +1,13 @@
-use strict;
-use warnings;
-use ExtUtils::MakeMaker;
+use inc::Module::Install;
+name 'Data-Page-FlickrLike';
+all_from 'lib/Data/Page/FlickrLike.pm';
 
-WriteMakefile(
-    NAME                => 'Data::Page::FlickrLike',
-    AUTHOR              => 'Masayoshi Sekimura <sekimura@gmail.com>',
-    VERSION_FROM        => 'lib/Data/Page/FlickrLike.pm',
-    ABSTRACT_FROM       => 'lib/Data/Page/FlickrLike.pm',
-    PL_FILES            => {},
-    PREREQ_PM => {
-        'Test::More' => 0,
-        'version'    => 0,
-    },
-    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'Data-Page-FlickrLike-*' },
-);
+requires 'Data::Page';
+requires 'Exporter::Lite';
+
+build_requires 'Test::More';
+build_requires 'YAML';
+use_test_base;
+auto_include_deps;
+author_tests('xt');
+WriteAll;
