@@ -11,20 +11,39 @@ our $VERSION = '1.00';
 
 our @EXPORT = qw( navigations );
 
+our $InnerWindow = 3;
+our $OuterWindow = 2;
+our $MinLength   = 7;
+our $GlueLength  = 2;
+
 sub Data::Page::navigations {
-    my ($self) = @_;
+    my ($self, $args) = @_;
     my $nav;
     my $prev_skip = 1;
     my $next_skip = 1;
+
+    my $inner = exists $args->{inner_window}
+      ? $args->{inner_window}
+      : $Data::Page::FlickrLike::InnerWindow;
+    my $outer = exists $args->{outer_window}
+      ? $args->{outer_window}
+      : $Data::Page::FlickrLike::OuterWindow;
+    my $min = exists $args->{min_length}
+      ? $args->{min_length}
+      : $Data::Page::FlickrLike::MinLength;
+    my $glue = exists $args->{glue_length}
+      ? $args->{glue_length}
+      : $Data::Page::FlickrLike::GlueLength;
+
     for my $page ($self->first_page .. $self->last_page) {
-        if ( (   $page > $self->current_page - 4
-              && $page < $self->current_page + 4 ) ||
-             ($self->current_page - 8 < $self->first_page
-              && $page < $self->first_page + 7) ||
-             ($self->last_page - 8    < $self->current_page
-              && $page > $self->last_page  - 7) ||
-             ($page < $self->first_page + 2) ||
-             ($page > $self->last_page  - 2) ) {
+        if ((   $page >= $self->current_page - ($inner)
+             && $page <= $self->current_page + ($inner)) ||
+            ($self->current_page <= $self->first_page + ($inner + $glue + $outer)
+             && $page < $self->first_page + $min ) ||
+            ($self->current_page >= $self->last_page - ($inner + $glue + $outer)
+             && $page > $self->last_page  - $min) ||
+            ($page < $self->first_page + $outer) ||
+            ($page > $self->last_page  - $outer)) {
             push @$nav, $page;
         }
         elsif ( ($page < $self->current_page && $prev_skip ) ) {
@@ -102,6 +121,43 @@ So, you need to put an exception to display an ellipsis(...) like this.
             print qq{<a href="/page/$_">$_</a>};
         }
     }
+
+=back
+
+=head1 CONFIGURATION VARIABLES
+
+By default, navigation() generates an array reference to create pagination
+links exactly as the same as Flickr.com does. But if you do not like this
+behavior, you can tweak these configuration variables.
+
+=over 4
+
+=item $Data::Page::FlickrLike::InnerWindow or $page->navigations({inner_window => $val})
+
+Customises the number of links displayed at side of the current page.
+
+=item $Data::Page::FlickrLike::OuterWindow or $page->navigations({outer_window => $val}) 
+
+Customises the number of links displayed at the start and end of the page
+links.
+
+=item $Data::Page::FlickrLike::MinLength or $page->navigations({min_length => $val})
+
+Customises the minimum number of the links displayed when the current page at
+the first or last page.
+
+=item $Data::Page::FlickrLike::GlueLength or $page->navigations({glue_length => $val})
+
+Customises the minimum number of the links at the either side of the current
+page and the links at the first and last. For example, these "3g" and "4g"
+are displayed because of the glue length (= 2).
+
+ 1   2   3   4   5   6*  7   8   9     ...   21   22
+ 1   2   3g  4   5   6   7*  8   9   10     ...   21   22
+ 1   2   3g  4g  5   6   7   8*  9   10   11     ...  21   22 
+ 1   2     ...   5   6   7   8   9*  10   11   12     ...   21   22
+
+ (* means a number of the current page)
 
 =back
 
