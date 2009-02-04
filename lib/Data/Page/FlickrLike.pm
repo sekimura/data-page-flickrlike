@@ -7,7 +7,7 @@ use 5.008_001;
 use Exporter::Lite;
 use Data::Page;
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 our @EXPORT = qw( navigations );
 

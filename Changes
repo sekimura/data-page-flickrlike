@@ -1,4 +1,7 @@
 Revision history for Data-Page-FlickrLike
 
+1.02  Wed Feb  4 13:53:09 PST 2009
+       re-tagged with 'inc' dir for Module::Install.
+
 1.01  Wed Feb  4 13:39:26 PST 2009
        Initial release.
