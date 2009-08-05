@@ -1,3 +1,5 @@
+## test for 0 page
+## test for weird boundaries
 -
   input:
     total_entries: 100
@@ -174,3 +176,67 @@
   expected:
     navigations: [1, 2, 0, 61, 62, 63, 64, 65, 66, 67]
     out: 1 | 2 | ... | 61 | 62 | 63 | 64 | 65 | 66 | 67
+-
+  input:
+    total_entries: 1000000
+    entries_per_page: 18
+    current_page: 68
+  expected:
+    navigations: [1, 2, 0, 65, 66, 67, 68, 69, 70, 71, 0, 55555, 55556]
+    out: 1 | 2 | ... | 65 | 66 | 67 | 68 | 69 | 70 | 71 | ... | 55555 | 55556
+-
+  input:
+    total_entries: 100000000
+    entries_per_page: 10
+    current_page: 99999999
+  expected:
+    navigations: [1, 2, 0, 9999994, 9999995, 9999996, 9999997, 9999998, 9999999, 10000000]
+    out: 1 | 2 | ... | 9999994 | 9999995 | 9999996 | 9999997 | 9999998 | 9999999 | 10000000
+-
+  input:
+    total_entries: 100000000
+    entries_per_page: 10
+    current_page: 100000
+  expected:
+    navigations: [1, 2, 0, 99997, 99998, 99999, 100000, 100001, 100002, 100003, 0, 9999999, 10000000]
+    out: 1 | 2 | ... | 99997 | 99998 | 99999 | 100000 | 100001 | 100002 | 100003 | ... | 9999999 | 10000000
+-
+  input:
+    total_entries: 100000000
+    entries_per_page: 1
+    current_page: 100000
+  expected:
+    navigations: [1, 2, 0, 99997, 99998, 99999, 100000, 100001, 100002, 100003, 0, 99999999, 100000000]
+    out: 1 | 2 | ... | 99997 | 99998 | 99999 | 100000 | 100001 | 100002 | 100003 | ... | 99999999 | 100000000
+-
+  input:
+    total_entries: 100000000
+    entries_per_page: 100000000
+    current_page: 1
+  expected:
+    navigations: [ 1 ]
+    out: 1
+-
+  input:
+    total_entries: 100000000
+    entries_per_page: 1000000000
+    current_page: 1
+  expected:
+    navigations: [ 1 ]
+    out: 1
+-
+  input:
+    total_entries: 0
+    entries_per_page: 10
+    current_page: 1
+  expected:
+    navigations: [ 1 ]
+    out: 1
+-
+  input:
+    total_entries: 0
+    entries_per_page: 1
+    current_page: 0
+  expected:
+    navigations: [ 1 ]
+    out: 1

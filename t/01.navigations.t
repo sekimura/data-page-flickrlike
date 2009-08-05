@@ -1,4 +1,4 @@
-use Test::More tests => 22;
+use Test::More tests => 30;
 
 use Data::Page;
 use Data::Page::FlickrLike;

@@ -16,6 +16,17 @@ our $OuterWindow = 2;
 our $MinLength   = 7;
 our $GlueLength  = 2;
 
+
+sub get_min_fill {
+    my ($page, $first_page, $last_page, $min) = @_;
+    my $length = $last_page - $first_page + 1 < $min
+                ? $last_page - $first_page + 1
+                : $min;
+
+    my $current_length = scalar @$page;
+    return $length - $current_length;
+}
+
 sub Data::Page::navigations {
     my ($self, $args) = @_;
     my $nav;
@@ -31,30 +42,84 @@ sub Data::Page::navigations {
     my $min = exists $args->{min_length}
       ? $args->{min_length}
       : $Data::Page::FlickrLike::MinLength;
-    my $glue = exists $args->{glue_length}
+    my $glue_length = exists $args->{glue_length}
       ? $args->{glue_length}
       : $Data::Page::FlickrLike::GlueLength;
 
-    for my $page ($self->first_page .. $self->last_page) {
-        if ((   $page >= $self->current_page - ($inner)
-             && $page <= $self->current_page + ($inner)) ||
-            ($self->current_page <= $self->first_page + ($inner + $glue + $outer)
-             && $page < $self->first_page + $min ) ||
-            ($self->current_page >= $self->last_page - ($inner + $glue + $outer)
-             && $page > $self->last_page  - $min) ||
-            ($page < $self->first_page + $outer) ||
-            ($page > $self->last_page  - $outer)) {
-            push @$nav, $page;
+    my $current_page = $self->current_page;
+    my $last_page    = $self->last_page;
+    my $first_page   = $self->first_page;
+
+    ## build the pages around current_page to begin with
+    for (my $i = $current_page - $inner; $i <= $current_page + $inner ; $i++) {
+        push @$nav, $i if $i >= $first_page && $i <= $last_page;
+    }
+
+    ## shortcut if we already take all the room
+    if ($nav->[0] == $first_page && $nav->[-1] == $last_page) {
+        return wantarray ? @$nav : $nav;
+    }
+
+    ## NOTE: there are some extra operations in there just in case $first_page != 1
+    ## but, this shouldn't really be necessary...
+
+    if ($nav->[0] == $first_page && $nav->[-1] != $last_page) {
+        ## we're stuck at the beginning, check for $min_lengh
+        my $min_fill = get_min_fill($nav, $first_page, $last_page, $min);
+        my $last = $nav->[-1];
+        push @$nav, map { $last + $_ } (1 .. $min_fill);
+    }
+
+    ## stuck at the end: fill the beginning using $min_length
+    elsif ($nav->[0] != $first_page && $nav->[-1] == $last_page) {
+        my $min_fill = get_min_fill($nav, $first_page, $last_page, $min);
+        my $first = $nav->[0];
+        unshift @$nav, reverse map { $first - $_ } (1 .. $min_fill);
+    }
+
+    ## now, care about extremities specifically
+    my (@begin, @end);
+    for (0 .. ($outer - 1)) {
+        push @begin, $first_page + $_;
+        push @end,   $last_page  - $_;
+    }
+    @end = reverse @end;
+
+    ## we might need some glue
+    if ($begin[-1] < $nav->[0] - 1) {
+        my $to_glue = $nav->[0] - $begin[-1] - 1;
+        if ($to_glue <= $glue_length) {
+            ## we can glue!
+            my $last = $begin[-1];
+            push @begin, map { $last + $_ } (1 .. $to_glue);
+
         }
-        elsif ( ($page < $self->current_page && $prev_skip ) ) {
-            push @$nav, 0;
-            $prev_skip--;
-        }
-        elsif ( ($page > $self->current_page && $next_skip ) ) {
-            push @$nav, 0;
-            $next_skip--;
+        else {
+            push @begin, 0;
         }
     }
+    if ($end[0] > $nav->[-1] + 1) {
+        my $to_glue = $end[0] - $nav->[-1] - 1;
+        if ($to_glue <= $glue_length) {
+            ## we can glue!
+            my $first = $end[0];
+            unshift @end, reverse map { $first - $_ } (1 .. $to_glue);
+        }
+        else {
+            unshift @end, 0;
+        }
+    }
+
+    ## trim redundant items if they exist
+    while (@begin && $begin[-1] >= $nav->[0]) {
+        pop @begin;
+    };
+    while (@end && $end[0] && $end[0] <= $nav->[-1]) {
+        shift @end;
+    };
+
+    $nav = [ @begin, @$nav, @end ];
+
     return wantarray ? @$nav : $nav;
 }
 
