@@ -162,22 +162,22 @@ navigation links.
 
 =item navigations (Data::Page)
 
-This method gets an array reference consists of the number of pages.
+This method returns an array reference consisting of the the pages to display.
 
    $nav = $page->navigations
 
-It calculates: how may numbers should be displayed from the first page, how
-many numbers should be displayed form the last page, whether or not there's 
-a big enough gap between the first page and current page to put an ellipsis
-and more.  As the name of this modules says, the array ref should make it 
-easy to generate a "Flickr-Like" navigation.
+It calculates: how many pages should be displayed after the first and before 
+the last page, whether or not there's a big enough gap between the first page
+and the current page to put an ellipsis and more.
+As the name of this modules says, the array ref should make it easy to generate
+a "Flickr-Like" navigation.
 
-It uses "0" for an ellipsis between two sets of page numbers.  For example, 
-if you have enough amount of items, navigations() returns like this:
+This methods uses "0" to represent an ellipsis between two sets of page numbers.
+For example, if you have enough pages, navigations() returns like this:
 
   [ 1, 2, 3, 4, 5, 6, 7, 0, 76, 77 ] 
 
-So, you need to put an exception to display an ellipsis(...) like this.
+So, to display an ellipsis(...) you would write:
 
     for my $num ($page->navigations) {
         if ($num == 0 ) {
@@ -191,38 +191,40 @@ So, you need to put an exception to display an ellipsis(...) like this.
 
 =head1 CONFIGURATION VARIABLES
 
-By default, navigation() generates an array reference to create pagination
-links exactly as the same as Flickr.com does. But if you do not like this
-behavior, you can tweak these configuration variables.
+By default, navigation() generates an array reference to create the same pagination
+than Flickr.com. But if you do not like this behavior, you can tweak the following
+configuration variables:
 
 =over 4
 
 =item $Data::Page::FlickrLike::InnerWindow or $page->navigations({inner_window => $val})
 
-Customises the number of links displayed at side of the current page.
+Customises the minimum number of pages before and after the current page.
 
 =item $Data::Page::FlickrLike::OuterWindow or $page->navigations({outer_window => $val}) 
 
-Customises the number of links displayed at the start and end of the page
-links.
+Customises the number of pages at the start and end of the pager.
 
 =item $Data::Page::FlickrLike::MinLength or $page->navigations({min_length => $val})
 
-Customises the minimum number of the links displayed when the current page at
-the first or last page.
+If current page is adjacent to an edge, the number of pages returned around current
+page will be extended to meet c<$Data::Page::FlickrLike::MinLength>
 
 =item $Data::Page::FlickrLike::GlueLength or $page->navigations({glue_length => $val})
 
-Customises the minimum number of the links at the either side of the current
-page and the links at the first and last. For example, these "3g" and "4g"
-are displayed because of the glue length (= 2).
+Customises the glue capability of the page. "Gluing" means that if the set
+containing the current page is isolated of an edge, we merge the two sets
+together by adding the interleaved pages to form a bigger set. This variable defines
+the maximum distance between two sets required to glue them together.
+
+For example, these "3g" and "4g" are displayed because of the glue length (= 2).
 
  1   2   3   4   5   6*  7   8   9     ...   21   22
  1   2   3g  4   5   6   7*  8   9   10     ...   21   22
  1   2   3g  4g  5   6   7   8*  9   10   11     ...  21   22 
  1   2     ...   5   6   7   8   9*  10   11   12     ...   21   22
 
- (* means a number of the current page)
+ (* represents the current page)
 
 =back
 
