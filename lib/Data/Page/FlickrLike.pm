@@ -17,7 +17,7 @@ our $MinLength   = 7;
 our $GlueLength  = 2;
 
 
-sub get_min_fill {
+sub _get_min_fill {
     my ($page, $first_page, $last_page, $min) = @_;
     my $length = $last_page - $first_page + 1 < $min
                ? $last_page - $first_page + 1
@@ -65,14 +65,14 @@ sub Data::Page::navigations {
 
     if ($nav->[0] == $first_page && $nav->[-1] != $last_page) {
         ## we're stuck at the beginning, check for $min_lengh
-        my $min_fill = get_min_fill($nav, $first_page, $last_page, $min);
+        my $min_fill = _get_min_fill($nav, $first_page, $last_page, $min);
         my $last = $nav->[-1];
         push @$nav, map { $last + $_ } (1 .. $min_fill);
     }
 
     ## stuck at the end: fill the beginning using $min_length
     elsif ($nav->[0] != $first_page && $nav->[-1] == $last_page) {
-        my $min_fill = get_min_fill($nav, $first_page, $last_page, $min);
+        my $min_fill = _get_min_fill($nav, $first_page, $last_page, $min);
         my $first = $nav->[0];
         unshift @$nav, reverse map { $first - $_ } (1 .. $min_fill);
     }
