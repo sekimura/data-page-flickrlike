@@ -8,6 +8,7 @@ requires 'Exporter::Lite';
 build_requires 'Test::More';
 build_requires 'YAML';
 use_test_base;
+githubmeta;
 auto_include_deps;
 author_tests('xt');
 WriteAll;
