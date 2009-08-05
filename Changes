@@ -1,6 +1,6 @@
 Revision history for Data-Page-FlickrLike
 
-1.03
+2.00
        Complete reimplementation to fix drastic performance issues when
        there are a lot of pages. (Yann Kerherve)
 
