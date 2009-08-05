@@ -20,8 +20,8 @@ our $GlueLength  = 2;
 sub get_min_fill {
     my ($page, $first_page, $last_page, $min) = @_;
     my $length = $last_page - $first_page + 1 < $min
-                ? $last_page - $first_page + 1
-                : $min;
+               ? $last_page - $first_page + 1
+               : $min;
 
     my $current_length = scalar @$page;
     return $length - $current_length;
