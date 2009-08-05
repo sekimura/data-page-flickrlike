@@ -229,6 +229,7 @@ are displayed because of the glue length (= 2).
 =head1 AUTHOR
 
 Masayoshi Sekimura E<lt>sekimura@cpan.orgE<gt>
+Yann Kerherve E<lt>yannk@cpan.orgE<gt>
 
 =head1 LICENSE
 
