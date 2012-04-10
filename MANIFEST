@@ -32,7 +32,6 @@ lib/Data/Page/FlickrLike.pm
 Makefile.PL
 MANIFEST
 META.yml
-MYMETA.yml
 README
 t/00.load.t
 t/01.navigations.t
