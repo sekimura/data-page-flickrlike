@@ -1,5 +1,8 @@
 Revision history for Data-Page-FlickrLike
 
+2.03  Tue Apr 10 10:37:22 PDT 2012
+	removed MYMETA from manifest
+
 2.02  Mon Apr  9 14:35:19 PDT 2012
 	fixed Bareword "githubmeta" issue. (Yann Kerherve)
 
